@@ -2,7 +2,7 @@ window.addEventListener("DOMContentLoaded", () => {
   loadData();
 });
 
-const CRUD_API_LINK ="https://crudcrud.com/api/ac84fe25ff1f4d79abc7e7113ba699eb/feedbackForm";
+const CRUD_API_LINK ="https://crudcrud.com/api/5dd0b5e551d649b8b8048b2ed2fc652b/feedbackForm";
 
 let oneStar = document.getElementById("one-star");
 let twoStar = document.getElementById("two-star");
