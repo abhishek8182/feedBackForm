@@ -2,7 +2,8 @@ window.addEventListener("DOMContentLoaded", () => {
   loadData();
 });
 
-const CRUD_API_LINK ="https://crudcrud.com/api/5dd0b5e551d649b8b8048b2ed2fc652b/feedbackForm";
+const CRUD_API_LINK =
+  "https://crudcrud.com/api/09054e0474e747afa4a9a081b7111d49/feedbackForm";
 
 let oneStar = document.getElementById("one-star");
 let twoStar = document.getElementById("two-star");
@@ -16,39 +17,44 @@ let ratingInput = document.getElementById("rating");
 let ulEl = document.querySelector("ul");
 
 // event occur when form is submitted
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  let feedbackDetail = {
-    name: nameInput.value,
-    rating: ratingInput.value,
-  };
+form.addEventListener("submit", async (e) => {
+  try {
+    e.preventDefault();
+    let feedbackDetail = {
+      name: nameInput.value,
+      rating: ratingInput.value,
+    };
 
-  console.log(feedbackDetail);
-  axios
-    .post(CRUD_API_LINK, feedbackDetail)
-    .then((res) => {
-      console.log(res);
-      nameInput.value = "";
-      ratingInput.value = 1;
-      loadData();
-    })
-    .catch((err) => console.log(err));
+    console.log(feedbackDetail);
+    const data = await axios.post(CRUD_API_LINK, feedbackDetail);
+    console.log(data);
+    nameInput.value = "";
+    ratingInput.value = 1;
+    loadData();
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // Load Data
-function loadData() {
-  ulEl.innerHTML = "";
-  let one = 0;
-  let two = 0;
-  let three = 0;
-  let four = 0;
-  let five = 0;
+async function loadData() {
+  try {
+    ulEl.innerHTML = "";
+    let one = 0;
+    let two = 0;
+    let three = 0;
+    let four = 0;
+    let five = 0;
 
-  axios.get(CRUD_API_LINK)
-  .then((res) => {
-    console.log(res.data);
+    const res = await axios.get(CRUD_API_LINK);
+
+    //console.log(res); //get object with data property
+    
+    //console.log(res.data); //get data in array
+
     res.data.forEach((element) => {
       let liEl = document.createElement("li");
+
       liEl.innerHTML = `${element.name} - ${element.rating} - <button onclick="deleteItem('${element._id}')">Delete</button> - <button onclick="edit('${element._id}', '${element.name}', '${element.rating}')">Edit</button>`;
 
       ulEl.append(liEl);
@@ -71,7 +77,9 @@ function loadData() {
     threeStar.innerText = three;
     fourStar.innerText = four;
     fiveStar.innerText = five;
-  });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Delete item
@@ -87,6 +95,7 @@ async function deleteItem(id) {
 
 // Edit item
 function edit(id, name, rating) {
+  //poluted the input field
   nameInput.value = name;
   ratingInput.value = rating;
   deleteItem(id);
