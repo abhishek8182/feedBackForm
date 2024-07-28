@@ -3,38 +3,29 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 const CRUD_API_LINK =
-  "https://crudcrud.com/api/09054e0474e747afa4a9a081b7111d49/feedbackForm";
-
-let oneStar = document.getElementById("one-star");
-let twoStar = document.getElementById("two-star");
-let threeStar = document.getElementById("three-star");
-let fourStar = document.getElementById("four-star");
-let fiveStar = document.getElementById("five-star");
+  "https://crudcrud.com/api/29204912207b4611946470390f3737e5/feedbackForm";
 
 const form = document.querySelector("form");
-let nameInput = document.getElementById("name");
-let ratingInput = document.getElementById("rating");
 let ulEl = document.querySelector("ul");
 
 // event occur when form is submitted
-form.addEventListener("submit", async (e) => {
-  try {
-    e.preventDefault();
-    let feedbackDetail = {
-      name: nameInput.value,
-      rating: ratingInput.value,
-    };
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  addOrUpdate();
+});
 
-    console.log(feedbackDetail);
-    const data = await axios.post(CRUD_API_LINK, feedbackDetail);
-    console.log(data);
-    nameInput.value = "";
-    ratingInput.value = 1;
+async function addOrUpdate() {
+  try {
+    const name = document.getElementById("name").value;
+    const rating = document.getElementById("rating").value;
+
+    await axios.post(CRUD_API_LINK, { name, rating });
+    form.reset();
     loadData();
   } catch (error) {
     console.log(error);
   }
-});
+}
 
 // Load Data
 async function loadData() {
@@ -49,7 +40,7 @@ async function loadData() {
     const res = await axios.get(CRUD_API_LINK);
 
     //console.log(res); //get object with data property
-    
+
     //console.log(res.data); //get data in array
 
     res.data.forEach((element) => {
@@ -72,11 +63,11 @@ async function loadData() {
       }
     });
 
-    oneStar.innerText = one;
-    twoStar.innerText = two;
-    threeStar.innerText = three;
-    fourStar.innerText = four;
-    fiveStar.innerText = five;
+    document.getElementById("one-star").innerText = one;
+    document.getElementById("two-star").innerText = two;
+    document.getElementById("three-star").innerText = three;
+    document.getElementById("four-star").innerText = four;
+    document.getElementById("five-star").innerText = five;
   } catch (error) {
     console.log(error);
   }
@@ -85,8 +76,7 @@ async function loadData() {
 // Delete item
 async function deleteItem(id) {
   try {
-    let data = await axios.delete(`${CRUD_API_LINK}/${id}`);
-    console.log(data);
+    await axios.delete(`${CRUD_API_LINK}/${id}`);
     loadData();
   } catch (error) {
     console.log(error);
@@ -95,8 +85,8 @@ async function deleteItem(id) {
 
 // Edit item
 function edit(id, name, rating) {
-  //poluted the input field
-  nameInput.value = name;
-  ratingInput.value = rating;
+  //polluted the input field
+  document.getElementById("name").value = name;
+  document.getElementById("rating").value = rating;
   deleteItem(id);
 }
