@@ -3,12 +3,14 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 const CRUD_API_LINK =
-  "https://crudcrud.com/api/29204912207b4611946470390f3737e5/feedbackForm";
+  "https://crudcrud.com/api/ad3081fa6d30462e9d414bad116990f9/feedbackForm";
 
 const form = document.querySelector("form");
 let ulEl = document.querySelector("ul");
 
-// event occur when form is submitted
+let editId = null; // Store the id of the item being edited
+
+// Event occurs when the form is submitted
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   addOrUpdate();
@@ -19,7 +21,15 @@ async function addOrUpdate() {
     const name = document.getElementById("name").value;
     const rating = document.getElementById("rating").value;
 
-    await axios.post(CRUD_API_LINK, { name, rating });
+    if (editId) {
+      // If editId is not null, update the existing item
+      await axios.put(`${CRUD_API_LINK}/${editId}`, { name, rating });
+      editId = null; // Reset editId after updating
+    } else {
+      // Otherwise, create a new item
+      await axios.post(CRUD_API_LINK, { name, rating });
+    }
+
     form.reset();
     loadData();
   } catch (error) {
@@ -38,10 +48,6 @@ async function loadData() {
     let five = 0;
 
     const res = await axios.get(CRUD_API_LINK);
-
-    //console.log(res); //get object with data property
-
-    //console.log(res.data); //get data in array
 
     res.data.forEach((element) => {
       let liEl = document.createElement("li");
@@ -85,8 +91,8 @@ async function deleteItem(id) {
 
 // Edit item
 function edit(id, name, rating) {
-  //polluted the input field
+  // Populate the input fields with the selected item’s data
   document.getElementById("name").value = name;
   document.getElementById("rating").value = rating;
-  deleteItem(id);
+  editId = id; // Set the editId to the id of the item being edited
 }
